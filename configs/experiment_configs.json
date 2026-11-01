@@ -1,0 +1,129 @@
+{
+    "description": "联邦CVAE知识蒸馏实验配置文件",
+    "version": "2.0",
+    
+    "default_config": {
+        "num_clients": 10,
+        "num_rounds": 50,
+        "local_epochs": 5,
+        "distill_epochs": 3,
+        "batch_size": 32,
+        "lr": 0.001,
+        "alpha": 0.5,
+        "use_distillation": true
+    },
+    
+    "quick_test_config": {
+        "num_rounds": 5,
+        "local_epochs": 2,
+        "distill_epochs": 1
+    },
+    
+    "datasets": {
+        "cifar10": {
+            "description": "CIFAR-10数据集 (32x32x3, 10类)",
+            "num_classes": 10,
+            "img_size": 32,
+            "img_channels": 3,
+            "train_samples": 50000,
+            "test_samples": 10000
+        },
+        "cifar100": {
+            "description": "CIFAR-100数据集 (32x32x3, 100类)",
+            "num_classes": 100,
+            "img_size": 32,
+            "img_channels": 3,
+            "train_samples": 50000,
+            "test_samples": 10000
+        },
+        "mnist": {
+            "description": "MNIST数据集 (28x28x1, 10类) - Baseline",
+            "num_classes": 10,
+            "img_size": 32,
+            "img_channels": 1,
+            "train_samples": 60000,
+            "test_samples": 10000
+        }
+    },
+    
+    "partitions": {
+        "iid": {
+            "description": "独立同分布 (IID) - 数据随机均匀分配",
+            "params": {}
+        },
+        "dirichlet": {
+            "description": "Dirichlet Non-IID - 使用Dirichlet分布进行异构划分",
+            "params": {
+                "alpha": 0.5,
+                "alpha_variants": [0.1, 0.5, 1.0]
+            }
+        },
+        "label_skew": {
+            "description": "标签偏斜 Non-IID - 每个客户端只有部分类别",
+            "params": {
+                "labels_per_client": 2
+            }
+        }
+    },
+    
+    "model_sizes": {
+        "small": {
+            "description": "10M参数级别 - 快速实验",
+            "teacher_params": "~10M",
+            "student_params": "~3M",
+            "recommended_for": ["初始实验", "快速验证"]
+        },
+        "medium": {
+            "description": "50M参数级别 - 标准实验",
+            "teacher_params": "~50M",
+            "student_params": "~15M",
+            "recommended_for": ["正式实验", "论文结果"]
+        },
+        "large": {
+            "description": "100M参数级别 - 大规模实验",
+            "teacher_params": "~100M",
+            "student_params": "~30M",
+            "recommended_for": ["性能上限探索"]
+        }
+    },
+    
+    "experiment_matrix": {
+        "baseline": [
+            {"dataset": "mnist", "partition": "iid", "model_size": "small"},
+            {"dataset": "mnist", "partition": "dirichlet", "model_size": "small"}
+        ],
+        "main_experiments": [
+            {"dataset": "cifar10", "partition": "iid", "model_size": "small"},
+            {"dataset": "cifar10", "partition": "dirichlet", "model_size": "small"},
+            {"dataset": "cifar10", "partition": "label_skew", "model_size": "small"},
+            {"dataset": "cifar10", "partition": "iid", "model_size": "medium"},
+            {"dataset": "cifar10", "partition": "dirichlet", "model_size": "medium"},
+            {"dataset": "cifar10", "partition": "label_skew", "model_size": "medium"},
+            {"dataset": "cifar100", "partition": "iid", "model_size": "small"},
+            {"dataset": "cifar100", "partition": "dirichlet", "model_size": "small"},
+            {"dataset": "cifar100", "partition": "label_skew", "model_size": "small"},
+            {"dataset": "cifar100", "partition": "iid", "model_size": "medium"},
+            {"dataset": "cifar100", "partition": "dirichlet", "model_size": "medium"},
+            {"dataset": "cifar100", "partition": "label_skew", "model_size": "medium"}
+        ]
+    },
+    
+    "evaluation_metrics": {
+        "primary": [
+            "teacher_accuracy",
+            "student_accuracy",
+            "accuracy_retention"
+        ],
+        "secondary": [
+            "reconstruction_mse",
+            "inference_speedup",
+            "model_compression_ratio"
+        ],
+        "training": [
+            "global_loss",
+            "distillation_loss",
+            "training_time"
+        ]
+    }
+}
+

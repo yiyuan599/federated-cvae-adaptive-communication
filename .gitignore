@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDEs
+.vs/
+.vscode/
+.idea/
+.claude/
+
+# Generated experiment artifacts
+output/
+checkpoints/
+tmp/
+*.log
+
+# Datasets and model weights
+data/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.safetensors
+
+# Archives
+results_csv.tar
+*.zip
+*.tar
+*.tar.gz
+*.7z
+
+# Papers, drafts, and legacy material
+*.docx
+*.pdf
+学长实验代码部分/
+README_使用说明.md
+
+# Secrets and local configuration
+.env
+.env.*
+*.local
